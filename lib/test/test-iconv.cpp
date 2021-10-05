@@ -21,7 +21,7 @@ TEST_F(IConvTest, utf2jis) {
 
     char srcBuf[] = "あ１Ａ";
     char *src = srcBuf;
-    std::size_t srcSize = sizeof(srcBuf);
+    std::size_t srcSize = strnlen(src, sizeof(srcBuf));
     char dstBuf[256];
     char *dst = dstBuf;
     std::size_t dstSize = sizeof(dstBuf);
@@ -41,10 +41,6 @@ TEST_F(IConvTest, utf2jis) {
 
     ASSERT_EQ(char(0x23), dstBuf[7]);
     ASSERT_EQ(char(0x41), dstBuf[8]);
-
-    ASSERT_EQ(char(0x1B), dstBuf[9]);
-    ASSERT_EQ(char(0x28), dstBuf[10]);
-    ASSERT_EQ(char(0x42), dstBuf[11]);
 
     iconv_close(cd);
 }

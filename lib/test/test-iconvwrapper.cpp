@@ -10,6 +10,75 @@ class IConvWrapperTest : public ::testing::Test {
     // virtual void TearDown() {}
 };
 
+TEST_F(IConvWrapperTest, utf2iso2022) {
+    auto converter = UTFtoiso2022Converter();
+
+    const auto iso2022 = converter.convert("あ１Ａ", false);
+
+    ASSERT_EQ(9, iso2022.size());
+
+    ASSERT_EQ(uint8_t(0x1B), iso2022[0]);
+    ASSERT_EQ(uint8_t(0x24), iso2022[1]);
+    ASSERT_EQ(uint8_t(0x42), iso2022[2]);
+
+    ASSERT_EQ(uint8_t(0x24), iso2022[3]);
+    ASSERT_EQ(uint8_t(0x22), iso2022[4]);
+
+    ASSERT_EQ(uint8_t(0x23), iso2022[5]);
+    ASSERT_EQ(uint8_t(0x31), iso2022[6]);
+
+    ASSERT_EQ(uint8_t(0x23), iso2022[7]);
+    ASSERT_EQ(uint8_t(0x41), iso2022[8]);
+}
+
+TEST_F(IConvWrapperTest, utf2iso2022RmEscSeq) {
+    auto converter = UTFtoiso2022Converter();
+
+    const auto iso2022 = converter.convert("あ１Ａ");
+
+    ASSERT_EQ(6, iso2022.size());
+
+    ASSERT_EQ(uint8_t(0x24), iso2022[0]);
+    ASSERT_EQ(uint8_t(0x22), iso2022[1]);
+
+    ASSERT_EQ(uint8_t(0x23), iso2022[2]);
+    ASSERT_EQ(uint8_t(0x31), iso2022[3]);
+
+    ASSERT_EQ(uint8_t(0x23), iso2022[4]);
+    ASSERT_EQ(uint8_t(0x41), iso2022[5]);
+}
+
+TEST_F(IConvWrapperTest, iso2022toutf) {
+    auto converter = iso2022toUTFConverter();
+
+    const  auto iso2022str = std::vector<uint8_t>({
+        0x1B, 0x24, 0x42,
+        0x24, 0x22,
+        0x23, 0x31,
+        0x23, 0x41        
+    });
+
+    const auto utfstr = converter.convert(iso2022str, false);
+    ASSERT_EQ("あ１Ａ", utfstr);
+}
+
+TEST_F(IConvWrapperTest, iso2022toutfAddEscSeq) {
+    auto converter = iso2022toUTFConverter();
+
+    const  auto iso2022str = std::vector<uint8_t>({
+        0x24, 0x22,
+        0x23, 0x31,
+        0x23, 0x41        
+    });
+
+    const auto utfstr = converter.convert(iso2022str);
+    ASSERT_EQ("あ１Ａ", utfstr);
+}
+
+
+
+
+
 TEST_F(IConvWrapperTest, utf2cp932) {
     constexpr char from[] = "UTF-8";
     constexpr char to[] = "CP932";
