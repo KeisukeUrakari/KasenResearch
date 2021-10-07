@@ -4,10 +4,13 @@ TARGET=app
 
 all:build
 
-build:
+build:eggx-0.95/libeggx.a
 	mkdir -p build
 	(cd build && cmake .. && make -j4)
 #	(cd build && cmake -G Ninja .. && ninja -j4)
+
+eggx-0.95/libeggx.a:
+	(cd eggx-0.95 && make)
 
 run:build
 	./build/src/$(TARGET)
@@ -29,3 +32,4 @@ pdf:doxygen
 clean:
 	-$(RM) -rf build
 	(cd doxygen && make clean)
+	(cd eggx-0.95 && make clean)
