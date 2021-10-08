@@ -56,3 +56,10 @@ build/
 doxygen/doxygen.log
 doxygen/html/
 doxygen/latex/
+
+eggx-0.95/egg
+eggx-0.95/exec_xslave.h
+eggx-0.95/exec_xslave
+eggx-0.95/_xslave_
+eggx-0.95/mkexheader
+
