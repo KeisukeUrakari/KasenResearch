@@ -1,3 +1,7 @@
-find_package(Iconv REQUIRED)
+find_package(Freetype REQUIRED)
+
+
+
+
 
 # Iconv_LIBRARIES

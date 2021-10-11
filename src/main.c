@@ -62,8 +62,9 @@ int main(int argc,char *argv[]){
         fprintf(stderr,"error FT_Init_FreeType\n");
         exit(EXIT_FAILURE);
     }
-//    error = FT_New_Face( library, "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc", 0, &face );
-    error = FT_New_Face( library, "/usr/share/fonts/noto-cjk/NotoSansCJK-Bold.ttc", 0, &face );
+    error = FT_New_Face( library, "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc", 0, &face );
+//    error = FT_New_Face( library, "/usr/share/fonts/noto-cjk/NotoSansCJK-Bold.ttc", 0, &face );
+
     if(error == FT_Err_Unknown_File_Format) {
         fprintf(stderr,"unsupport fonts format\n");
         exit(EXIT_FAILURE);
@@ -107,6 +108,7 @@ int main(int argc,char *argv[]){
                 } else {
                     end_loop = 8;
                 }
+                    end_loop = 8; //
                 for(int bit_index=0;bit_index<end_loop;bit_index++) {
                     int bit = byte_value & (1<<(7-bit_index));
                     if(bit!=0) {

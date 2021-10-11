@@ -8,7 +8,7 @@
             "name": "debug-lib-test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/lib/test/datediff-test",
+            "program": "${workspaceFolder}/build/lib/test/kasen-test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build",

@@ -1,8 +1,5 @@
 file(GLOB_RECURSE srcs ./*.c ./*.cpp)
 
-
-find_package(Freetype REQUIRED)
-
 include_directories(${FREETYPE_INCLUDE_DIRS})
 include_directories("../eggx-0.95")
 link_directories("../eggx-0.95")
