@@ -108,7 +108,6 @@ int main(int argc,char *argv[]){
                 } else {
                     end_loop = 8;
                 }
-                    end_loop = 8; //
                 for(int bit_index=0;bit_index<end_loop;bit_index++) {
                     int bit = byte_value & (1<<(7-bit_index));
                     if(bit!=0) {

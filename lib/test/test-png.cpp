@@ -23,5 +23,5 @@ TEST_F(PNGTest, test) {
         out[y][x] = row[x];
       }
     }
-    image.write("/tmp/output.png");
+//    image.write("/tmp/output.png");
 }

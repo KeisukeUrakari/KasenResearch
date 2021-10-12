@@ -8,13 +8,25 @@ extern "C" {
 }
 #include FT_FREETYPE_H
 
+class FTBitmap {
+  public:
+    std::vector<std::vector<bool>> rows;
+    int width;
+    int height;
+    int advanceX;
+    int advanceY;
+    int top;
+    int left;
+    int decender;
+};
+
 class FreeType {
 
   public:
     FreeType(const std::string &fontfile);
     ~FreeType();
 
-    std::vector<std::vector<bool>> draw(const std::string &text);
+    std::vector<FTBitmap> draw(const std::string &text, int size);
 
     static std::u32string char2u32str(const char text[]);
 
