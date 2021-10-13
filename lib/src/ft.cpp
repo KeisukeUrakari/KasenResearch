@@ -35,6 +35,41 @@ FreeType::~FreeType() {
     assert(FT_Done_FreeType(library_) == 0);
 }
 
+    /*
+I solved this issue with a simple fix, after I noticed that the actual height of the image was not calculated correctly.
+This is because the height of the "tallest" glyph does not represent the actual height of the image. For example,
+a character might be smaller than the tallest glyph, but placed higher above the baseline, and thus being out of bounds.
+
+I introduced another variable called "maxDescent", which stores the maximum amount of pixels below the baseline.
+It is calculated as following in the first loop:
+
+Together with "maxAscent", which stores the maximum amount of pixels above the baseline,
+I can calculate the actual height needed for the image by simply adding them together.
+
+この問題は、画像の実際の高さが正しく計算されていないことに気づき、簡単な修正で解決しました。
+これは、「最も高い」グリフの高さが、画像の実際の高さを表していないためです。
+例えば、あるキャラクターが最も高いグリフよりも小さくても、
+ベースラインよりも高い位置に配置されているため、範囲外になってしまうのです。
+
+そこで「maxDescent」という別の変数を導入し、ベースラインより下にあるピクセルの最大量を格納しました。
+この変数は、最初のループで以下のように計算されます。
+
+ベースラインからの最大ピクセル数を格納する "maxAscent "と合わせて、
+画像に必要な実際の高さを計算することができます。
+
+
+if ((glyph->metrics.height >> 6) - glyph->bitmap_top > (int)maxDescent) {
+    maxDescent = (glyph->metrics.height >> 6) - glyph->bitmap_top;
+}
+
+ if (glyph->bitmap_top > (int)maxAscent) {
+      maxAscent = glyph->bitmap_top;
+  }
+
+imageHeight = maxAscent + maxDescent
+*/
+
+
 std::vector<FTBitmap> FreeType::draw(const std::string &text, int size) {
     assert(FT_Set_Pixel_Sizes(face_, 0, size) == 0); //ピクセル単位でサイズ指定
 
@@ -69,6 +104,9 @@ std::vector<FTBitmap> FreeType::draw(const std::string &text, int size) {
         fb.decender = (face_->size->metrics.descender >> 6);
         //        pen_x += slot->advance.x >> 6;
         //        pen_y += slot->advance.y >> 6;
+
+        fb.desc = (slot->metrics.height >> 6) - slot->bitmap_top ;
+        fb.asc = slot->bitmap_top;
 
         ret.push_back(fb);
     }

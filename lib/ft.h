@@ -18,6 +18,8 @@ class FTBitmap {
     int top;
     int left;
     int decender;
+    int asc;
+    int desc;
 };
 
 class FreeType {
