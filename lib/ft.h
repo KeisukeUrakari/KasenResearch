@@ -12,31 +12,29 @@ class FTBitmap {
   public:
     std::vector<std::vector<bool>> rows;
     int width;
-    int height;
-    int advanceX;
-    int advanceY;
-    int top;
-    int left;
-    int decender;
     int asc;
     int desc;
 };
 
 class FreeType {
-
   public:
-    FreeType(const std::string &fontfile);
+    FreeType(const std::string &fontfile, int dotsize);
     ~FreeType();
 
-    std::vector<FTBitmap> draw(const std::string &text, int size);
+    std::vector<FTBitmap> draw(const std::string &text) const;
 
     static std::u32string char2u32str(const char text[]);
 
+    inline int baseline() const { return baseline_; }
+    inline int dotsize() const { return dotsize_; }
+
   private:
+    void calcextsize();
+    FTBitmap getinfo(FT_ULong u32char, int size) const;
+
     FT_Library library_;
     FT_Face face_;
+    int dotsize_;
+    int extsize_;
+    int baseline_;
 };
-
-//    int len = mbstowcs( ws, text, SIZE_OF_ARRAY(ws) );
-//const char text[]
-//std::u32string  u32str  = std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t>().from_bytes(text);

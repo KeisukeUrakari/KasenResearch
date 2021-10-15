@@ -5,12 +5,12 @@
 #include <codecvt>
 #include <locale>
 
-FreeType::FreeType(const std::string &fontfile) {
+FreeType::FreeType(const std::string &fontfile, int dotsize)
+    : dotsize_(dotsize), extsize_(0) {
     auto error = FT_Init_FreeType(&library_);
     assert(error == 0);
 
     error = FT_New_Face(library_, fontfile.c_str(), 0, &face_);
-    //    error = FT_New_Face( library, "/usr/share/fonts/noto-cjk/NotoSansCJK-Bold.ttc", 0, &face );
 
     if(error == FT_Err_Unknown_File_Format) {
         // [ERROR] Font file format is not supported!!
@@ -20,14 +20,7 @@ FreeType::FreeType(const std::string &fontfile) {
         assert(false);
     }
 
-#if 0
-    error = FT_Set_Pixel_Sizes(face_, 0, 16); //ピクセル単位でサイズ指定
-    // error = FT_Set_Pixel_Sizes( face_, 0, 120 ); //ピクセル単位でサイズ指定
-    // error = FT_Set_Char_Size( face, 0, 16 * 64, 300, 300); //ポイント単位でサイズ指定
-    if(error) {
-        assert(false);
-    }
-#endif
+    calcextsize();
 }
 
 FreeType::~FreeType() {
@@ -35,7 +28,42 @@ FreeType::~FreeType() {
     assert(FT_Done_FreeType(library_) == 0);
 }
 
-    /*
+FTBitmap FreeType::getinfo(FT_ULong u32char, int size) const {
+    auto error = FT_Set_Pixel_Sizes(face_, 0, size); //ピクセル単位でサイズ指定
+    assert(!error);
+
+    error = FT_Load_Char(face_, u32char, FT_LOAD_RENDER | FT_LOAD_MONOCHROME);
+    assert(!error);
+
+    auto &slot = face_->glyph;
+    auto &bitmap = slot->bitmap;
+
+    FTBitmap fb;
+    fb.width = bitmap.width;
+    fb.desc = (slot->metrics.height >> 6) - slot->bitmap_top;
+    fb.asc = slot->bitmap_top;
+
+    return fb;
+}
+
+void FreeType::calcextsize() {
+    auto sz = dotsize_;
+    auto a = FTBitmap();
+    auto w = FTBitmap();
+    for(; ((a.asc + a.desc) < dotsize_) && (a.width < dotsize_) && ((w.asc + w.desc) < dotsize_) && (w.width < dotsize_) ; ) {
+        sz++;
+        a = getinfo(char2u32str("あ")[0], sz);
+        w = getinfo(char2u32str("ｗ")[0], sz);
+    }
+
+    sz -= 1;
+    a = getinfo(char2u32str("あ")[0], sz);
+    const auto top = (dotsize_ - (a.asc + a.desc)) / 2;
+    extsize_ = sz;
+    baseline_ = top + a.asc;
+}
+
+/*
 I solved this issue with a simple fix, after I noticed that the actual height of the image was not calculated correctly.
 This is because the height of the "tallest" glyph does not represent the actual height of the image. For example,
 a character might be smaller than the tallest glyph, but placed higher above the baseline, and thus being out of bounds.
@@ -69,9 +97,8 @@ if ((glyph->metrics.height >> 6) - glyph->bitmap_top > (int)maxDescent) {
 imageHeight = maxAscent + maxDescent
 */
 
-
-std::vector<FTBitmap> FreeType::draw(const std::string &text, int size) {
-    assert(FT_Set_Pixel_Sizes(face_, 0, size) == 0); //ピクセル単位でサイズ指定
+std::vector<FTBitmap> FreeType::draw(const std::string &text) const {
+    assert(FT_Set_Pixel_Sizes(face_, 0, extsize_) == 0); //ピクセル単位でサイズ指定
 
     std::u32string u32str = char2u32str(text.c_str());
 
@@ -84,6 +111,16 @@ std::vector<FTBitmap> FreeType::draw(const std::string &text, int size) {
         assert(!error);
 
         FTBitmap fb;
+        fb.width = bitmap.width;
+        fb.asc = slot->bitmap_top;
+        fb.desc = (slot->metrics.height >> 6) - slot->bitmap_top;
+
+        auto liftup = int(0);
+        if((baseline_ + fb.desc) > dotsize_) {
+            liftup = (baseline_ + fb.desc) - dotsize_;
+        }
+        fb.asc += liftup;
+        fb.desc -= liftup;
 
         for(auto y = decltype(bitmap.rows)(0); y < bitmap.rows; ++y) {
             auto row = std::vector<bool>();
@@ -95,19 +132,6 @@ std::vector<FTBitmap> FreeType::draw(const std::string &text, int size) {
             }
             fb.rows.push_back(row);
         }
-        fb.width = fb.rows[0].size();
-        fb.height = fb.rows.size();
-        fb.advanceX = slot->advance.x >> 6;
-        fb.advanceY = slot->advance.y >> 6;
-        fb.top = slot->bitmap_top;
-        fb.left = slot->bitmap_left;
-        fb.decender = (face_->size->metrics.descender >> 6);
-        //        pen_x += slot->advance.x >> 6;
-        //        pen_y += slot->advance.y >> 6;
-
-        fb.desc = (slot->metrics.height >> 6) - slot->bitmap_top ;
-        fb.asc = slot->bitmap_top;
-
         ret.push_back(fb);
     }
 
