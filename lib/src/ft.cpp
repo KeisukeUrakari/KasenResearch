@@ -58,7 +58,7 @@ void FreeType::calcextsize() {
 
     sz -= 1;
     a = getinfo(char2u32str("あ")[0], sz);
-    const auto top = (dotsize_ - (a.asc + a.desc)) / 2;
+    const auto top = (dotsize_ - (a.asc + a.desc)) / 2 + (dotsize_ - (a.asc + a.desc)) % 2;
     extsize_ = sz;
     baseline_ = top + a.asc;
 }
