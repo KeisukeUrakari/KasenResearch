@@ -1,3 +1,4 @@
+#include <cassert>
 #include <gtest/gtest.h>
 #include <iostream>
 
@@ -26,8 +27,9 @@ TEST_F(FreetypeTest, test) {
     //auto ft = FreeType("/usr/share/fonts/truetype/fonts-japanese-gothic.ttf", fontsz);
     //auto ft = FreeType("/usr/share/fonts/truetype/fonts-japanese-mincho.ttf",fontsz);
     //auto ft = FreeType("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",fontsz);
-    auto ft = FreeType("/usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc", fontsz);
+    //auto ft = FreeType("/usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc", fontsz);
     //auto ft = FreeType("/usr/share/fonts/google-noto-cjk/NotoSansCJK-Bold.ttc",fontsz);
+    auto ft = FreeType("/usr/share/fonts/opentype/ipafont-mincho/ipam.ttf", fontsz);
     const auto &ftbitmaps = ft.draw("１あｗΜｇ！");
 
     const auto height = fontsz;
@@ -63,9 +65,11 @@ TEST_F(FreetypeTest, test) {
                 const auto black = png::basic_rgba_pixel<uint8_t>(0, 0, 0);
                 const auto &color = row[x] ? red : black;
                 const auto yy = ft.baseline() - fb.asc + y;
-                const auto xx = left + x + (ft.dotsize() - fb.width) / 2 + (ft.dotsize() - fb.width) % 2;
+                const auto xx = left + fb.left + x;
                 if(yy >= 0 && yy < height && xx >= 0 && xx < width) {
                     out[yy][xx] = color;
+                } else {
+                    assert(false);
                 }
             }
         }

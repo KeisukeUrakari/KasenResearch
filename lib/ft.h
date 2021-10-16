@@ -14,6 +14,7 @@ class FTBitmap {
     int width;
     int asc;
     int desc;
+    int left;
 };
 
 class FreeType {

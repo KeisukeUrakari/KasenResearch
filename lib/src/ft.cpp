@@ -50,7 +50,7 @@ void FreeType::calcextsize() {
     auto sz = dotsize_;
     auto a = FTBitmap();
     auto w = FTBitmap();
-    for(; ((a.asc + a.desc) < dotsize_) && (a.width < dotsize_) && ((w.asc + w.desc) < dotsize_) && (w.width < dotsize_) ; ) {
+    for(; ((a.asc + a.desc) <= dotsize_) && (a.width <= dotsize_) && ((w.asc + w.desc) <= dotsize_) && (w.width <= dotsize_) ; ) {
         sz++;
         a = getinfo(char2u32str("あ")[0], sz);
         w = getinfo(char2u32str("ｗ")[0], sz);
@@ -114,6 +114,7 @@ std::vector<FTBitmap> FreeType::draw(const std::string &text) const {
         fb.width = bitmap.width;
         fb.asc = slot->bitmap_top;
         fb.desc = (slot->metrics.height >> 6) - slot->bitmap_top;
+        fb.left = (dotsize_ - fb.width) / 2 + (dotsize_ - fb.width) % 2;
 
         auto liftup = int(0);
         if((baseline_ + fb.desc) > dotsize_) {
