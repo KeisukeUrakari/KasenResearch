@@ -22,6 +22,7 @@ void print(const std::vector<std::vector<bool>> &rows) {
     }
 }
 
+#if 0
 TEST_F(FreetypeTest, test) {
     const int fontsz = 48;
     //auto ft = FreeType("/usr/share/fonts/truetype/fonts-japanese-gothic.ttf", fontsz);
@@ -78,3 +79,4 @@ TEST_F(FreetypeTest, test) {
 
     out.write("/tmp/output.png");
 }
+#endif
