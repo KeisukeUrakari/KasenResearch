@@ -28,8 +28,6 @@ class Mosquitto {
   private:
     struct mosquitto *mosq_;
     std::mutex mutex_;
-    std::thread thread_;
-    bool loop_;
     bool connected_;
     disconnect_t disconnectCallback_;
     subscribe_t subscribeCallback_;

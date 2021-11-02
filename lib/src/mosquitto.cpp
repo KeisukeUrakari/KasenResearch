@@ -8,7 +8,7 @@
 
 #include "../mosquitto.h"
 
-Mosquitto::Mosquitto() : mosq_(nullptr), loop_(true), connected_(false) {
+Mosquitto::Mosquitto() : mosq_(nullptr), connected_(false) {
     if(MOSQ_ERR_SUCCESS != mosquitto_lib_init()) {
         assert(false);
     }
@@ -44,6 +44,7 @@ Mosquitto::Mosquitto() : mosq_(nullptr), loop_(true), connected_(false) {
             m->subscribeCallback_(topic, message->payload, std::size_t(message->payloadlen));
         }
     });
+
     mosquitto_loop_start(mosq_);
 }
 
