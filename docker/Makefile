@@ -17,7 +17,7 @@ pgadmin:
 #	chmod ugo+w pgadmin
 
 run:all
-	docker-compose up -d
+	sudo docker-compose up #-d
 
 clean:
 	-sudo $(RM) -fr mosquitto
