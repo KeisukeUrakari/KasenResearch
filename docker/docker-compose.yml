@@ -19,7 +19,7 @@ services:
       - 5432:5432
     volumes:
       - ./postgres/init:/docker-entrypoint-initdb.d
-      - ./pgdata:/var/lib/postgresql/data
+      - ./postgres/data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
@@ -40,3 +40,4 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     hostname: pgadmin4
     restart: always
+    user: root
