@@ -6,9 +6,9 @@ services:
     ports:
       - 1883:1883
     volumes:
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
-      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data:Z
+      - ./mosquitto/log:/mosquitto/log:Z
+      - ./mosquitto/config:/mosquitto/config:Z
     hostname: mosquitto
     restart: always
 
@@ -18,8 +18,8 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./postgres/init:/docker-entrypoint-initdb.d
-      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:Z
+      - ./postgres/data:/var/lib/postgresql/data:Z
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
@@ -34,7 +34,7 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./pgadmin:/var/lib/pgadmin
+      - ./pgadmin:/var/lib/pgadmin:Z
     environment:
       PGADMIN_DEFAULT_EMAIL: root@example.com
       PGADMIN_DEFAULT_PASSWORD: root

@@ -17,6 +17,7 @@ pgadmin:
 #	chmod ugo+w pgadmin
 
 run:all
+	sudo docker-compose down
 	sudo docker-compose up #-d
 
 clean:
