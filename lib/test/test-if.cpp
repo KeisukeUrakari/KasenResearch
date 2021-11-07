@@ -252,7 +252,7 @@ TEST_F(IFTest, test4) {
     auto obs = std::make_shared<Observer<TelecomModel>>();
     auto tobs = std::make_shared<TelecomObserver<TelecomModel>>();
     auto observers = std::vector<std::shared_ptr<IObserver<TelecomModel>>>({obs, tobs});
- 
+
     auto impls = std::vector<std::shared_ptr<ImplIF>>({panel, telecom, screen});
     for(auto i : impls) {
         i->tick(1);
@@ -261,4 +261,34 @@ TEST_F(IFTest, test4) {
     for(auto o : observers) {
         o->show(model);
     }
+}
+
+class ITest1 {
+  public:
+    virtual int func1() = 0;
+};
+
+class Test1 : public ITest1 {
+  public:
+    int func1() override { return 1; }
+};
+
+class ITest2 {
+  public:
+    virtual int func2() = 0;
+};
+
+class Test2 : public Test1, public ITest2 {
+  public:
+    int func1() override { return 10; }
+    int func2() override { return 2; }
+};
+
+TEST_F(IFTest, testA) {
+  auto t2 = Test2();
+  ITest1 &i1 = t2;
+  ITest2 &i2 = t2;
+
+  i1.func1();
+  i2.func2();
 }
