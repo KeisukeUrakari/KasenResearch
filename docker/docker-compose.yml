@@ -12,9 +12,9 @@ services:
     hostname: mosquitto
     restart: always
 
-  postgres12:
-    image: postgres:12-alpine
-    container_name: postgres12
+  postgres1018:
+    image: postgres:10.18-alpine
+    container_name: postgres1018
     ports:
       - 5432:5432
     volumes:
@@ -24,7 +24,7 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
-    hostname: postgres12
+    hostname: postgres
     restart: always
     user: root
 
