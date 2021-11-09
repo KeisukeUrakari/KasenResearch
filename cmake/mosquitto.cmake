@@ -21,8 +21,8 @@ find_package_handle_standard_args(
   MOSQUITTO DEFAULT_MSG
   MOSQUITTO_LIBRARY MOSQUITTO_INCLUDE_DIR)
 
-message(STATUS "libmosquitto include dir: ${MOSQUITTO_INCLUDE_DIR}")
-message(STATUS "libmosquitto: ${MOSQUITTO_LIBRARY}")
+#message(STATUS "libmosquitto include dir: ${MOSQUITTO_INCLUDE_DIR}")
+#message(STATUS "libmosquitto: ${MOSQUITTO_LIBRARY}")
 set(MOSQUITTO_LIBRARIES ${MOSQUITTO_LIBRARY})
 
 mark_as_advanced(MOSQUITTO_INCLUDE_DIR MOSQUITTO_LIBRARY)

@@ -7,6 +7,8 @@ project(${Project} CXX C)
 set(libs)
 set(ext-libs)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
+
 include(cmake/c.cmake)
 include(cmake/cxx.cmake)
 include(cmake/gtest.cmake)
@@ -20,3 +22,4 @@ add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(mosquitto)
+add_subdirectory(newt)

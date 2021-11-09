@@ -15,3 +15,7 @@ ESC & @ ESC $ B	1B 26 40 1B 24 42	JIS X 0208-1990
 ESC $ ( D	1B 24 28 44	JIS X 0212-1990
 
 ## png
+
+
+## findpackage
+https://qiita.com/shohirose/items/d9bda00a39a113965c5c
