@@ -26,8 +26,6 @@ TEST_F(ExceptionTest, test) {
     try {
         func2();
     } catch(std::exception &ex) {
-        std::cout << "catch: " << ex.what() << std::endl;
+//        std::cout << "catch: " << ex.what() << std::endl;
     }
-
-    FAIL();
 }

@@ -5,11 +5,11 @@
 class Hoge {
   public:
     Hoge() {
-        std::cout << "const" << std::endl;
+//        std::cout << "const" << std::endl;
     }
 
     ~Hoge() {
-        std::cout << "dest" << std::endl;
+//        std::cout << "dest" << std::endl;
     }
 };
 

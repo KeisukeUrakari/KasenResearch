@@ -121,18 +121,18 @@ class Worker {
             if(para < 0) {
                 continue;
             }
-            std::cout << "working..." << std::endl;
+            //            std::cout << "working..." << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            std::cout << "working..." << std::endl;
+            //            std::cout << "working..." << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            std::cout << "working..." << std::endl;
+            //            std::cout << "working..." << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            std::cout << "working..." << std::endl;
+            //            std::cout << "working..." << std::endl;
             {
                 auto lock = std::lock_guard<std::mutex>(mutex_);
                 promise_.set_value(param_ * 2);
                 param_ = -1;
-                std::cout << "finish..." << std::endl;
+                //                std::cout << "finish..." << std::endl;
             }
         }
     }
@@ -149,9 +149,9 @@ TEST_F(PromiseTest, test) {
 
     auto future = wrk.exe(10);
 
-    std::cout << "other work..." << std::endl;
+    //    std::cout << "other work..." << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    std::cout << "other wrok..." << std::endl;
+    //    std::cout << "other wrok..." << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     const auto r = future.get();

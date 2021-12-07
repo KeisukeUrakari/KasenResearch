@@ -38,7 +38,7 @@ class Wait {
 };
 
 void watiFutures(std::vector<std::future<int>> &futures) {
-    BOOST_LOG_TRIVIAL(trace) << "wait start";
+//    BOOST_LOG_TRIVIAL(trace) << "wait start";
     for(bool loop = true; loop;) {
         loop = false;
         for(auto &f : futures) {
@@ -48,7 +48,7 @@ void watiFutures(std::vector<std::future<int>> &futures) {
             }
         }
     }
-    BOOST_LOG_TRIVIAL(trace) << "wait end";
+//    BOOST_LOG_TRIVIAL(trace) << "wait end";
 }
 
 TEST_F(FutureTest, test1) {
@@ -63,8 +63,8 @@ TEST_F(FutureTest, test1) {
     futures.push_back(w2.func(20));
     watiFutures(futures);
 
-    BOOST_LOG_TRIVIAL(trace) << "get start";
+//    BOOST_LOG_TRIVIAL(trace) << "get start";
     const auto r1 = futures[0].get();
     const auto r2 = futures[1].get();
-    BOOST_LOG_TRIVIAL(trace) << "get end";
+//    BOOST_LOG_TRIVIAL(trace) << "get end";
 }

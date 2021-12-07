@@ -17,15 +17,15 @@ class Interface {
 class Impl : public Interface {
   public:
     Impl() {
-        BOOST_LOG_TRIVIAL(trace) << "Impl const";
+        //        BOOST_LOG_TRIVIAL(trace) << "Impl const";
     }
 
     ~Impl() {
-        BOOST_LOG_TRIVIAL(trace) << "Impl dest";
+        //        BOOST_LOG_TRIVIAL(trace) << "Impl dest";
     }
 
     void func() override {
-        BOOST_LOG_TRIVIAL(trace) << "func";
+        //        BOOST_LOG_TRIVIAL(trace) << "func";
     }
 };
 
@@ -38,5 +38,5 @@ TEST_F(IFTest, test) {
         }
         pi = ptr;
     }
-    BOOST_LOG_TRIVIAL(trace) << "dbg";
+//    BOOST_LOG_TRIVIAL(trace) << "dbg";
 }
