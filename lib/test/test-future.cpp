@@ -70,6 +70,9 @@ TEST_F(FutureTest, test1) {
     //    BOOST_LOG_TRIVIAL(trace) << "get end";
 }
 
+#define _FILE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+#define FLINE(msg) std::string(_FILE) + ":" + std::to_string(__LINE__) + " " + msg
+
 class Wait2 {
   public:
     Wait2(int msec) : msec_(msec) {
@@ -81,15 +84,7 @@ class Wait2 {
 
         auto t = std::thread([](int msec, int value, std::promise<int> p) {
             std::this_thread::sleep_for(std::chrono::milliseconds(msec));
-            try {
-#if 1
-                throw std::exception();
-#else
-                p.set_value_at_thread_exit(value * 2);
-#endif
-            } catch(...) {
-                p.set_exception(std::current_exception());
-            }
+            p.set_exception(std::make_exception_ptr(std::runtime_error(FLINE("error message"))));
         },
                              msec_, value, std::move(p));
         t.detach();
@@ -114,8 +109,8 @@ TEST_F(FutureTest, exception) {
         f.get();
         //        std::cout << "success" << std::endl;
     } catch(std::exception &ex) {
-        //      std::cout << "catch ex: " << ex.what() << std::endl;
+        //            std::cout << "catch ex: " << ex.what() << std::endl;
     }
 
-    //    FAIL();
+    //        FAIL();
 }
