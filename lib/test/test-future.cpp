@@ -1,4 +1,5 @@
 #include <boost/log/trivial.hpp>
+#include <exception>
 #include <future>
 #include <gtest/gtest.h>
 #include <thread>
@@ -38,7 +39,7 @@ class Wait {
 };
 
 void watiFutures(std::vector<std::future<int>> &futures) {
-//    BOOST_LOG_TRIVIAL(trace) << "wait start";
+    //    BOOST_LOG_TRIVIAL(trace) << "wait start";
     for(bool loop = true; loop;) {
         loop = false;
         for(auto &f : futures) {
@@ -48,7 +49,7 @@ void watiFutures(std::vector<std::future<int>> &futures) {
             }
         }
     }
-//    BOOST_LOG_TRIVIAL(trace) << "wait end";
+    //    BOOST_LOG_TRIVIAL(trace) << "wait end";
 }
 
 TEST_F(FutureTest, test1) {
@@ -63,8 +64,58 @@ TEST_F(FutureTest, test1) {
     futures.push_back(w2.func(20));
     watiFutures(futures);
 
-//    BOOST_LOG_TRIVIAL(trace) << "get start";
-    const auto r1 = futures[0].get();
-    const auto r2 = futures[1].get();
-//    BOOST_LOG_TRIVIAL(trace) << "get end";
+    //    BOOST_LOG_TRIVIAL(trace) << "get start";
+    //    const auto r1 = futures[0].get();
+    //    const auto r2 = futures[1].get();
+    //    BOOST_LOG_TRIVIAL(trace) << "get end";
+}
+
+class Wait2 {
+  public:
+    Wait2(int msec) : msec_(msec) {
+    }
+
+    std::future<int> func(int value) {
+        auto p = std::promise<int>();
+        auto f = p.get_future();
+
+        auto t = std::thread([](int msec, int value, std::promise<int> p) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(msec));
+            try {
+#if 1
+                throw std::exception();
+#else
+                p.set_value_at_thread_exit(value * 2);
+#endif
+            } catch(...) {
+                p.set_exception(std::current_exception());
+            }
+        },
+                             msec_, value, std::move(p));
+        t.detach();
+        return f;
+    }
+
+  private:
+    int msec_;
+};
+
+TEST_F(FutureTest, exception) {
+
+    auto w2 = Wait2(1000);
+    auto f = w2.func(5);
+
+    for(; f.wait_for(std::chrono::seconds(0)) != std::future_status::ready; std::this_thread::sleep_for(std::chrono::milliseconds(100))) {
+        //        std::cout << "wait" << std::endl;
+    }
+
+    //    std::cout << "ready" << std::endl;
+    try {
+        f.get();
+        //        std::cout << "success" << std::endl;
+    } catch(std::exception &ex) {
+        //      std::cout << "catch ex: " << ex.what() << std::endl;
+    }
+
+    //    FAIL();
 }
