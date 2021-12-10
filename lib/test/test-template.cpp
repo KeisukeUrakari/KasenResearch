@@ -9,7 +9,7 @@ class TemplateTest : public ::testing::Test {
     // virtual void TearDown() {}
 };
 
-
+#if 0
 template<>
 int func() {
     return 1;
@@ -19,6 +19,7 @@ template<>
 std::string func() {
     return "";
 }
+#endif
 
 #if 0
 
