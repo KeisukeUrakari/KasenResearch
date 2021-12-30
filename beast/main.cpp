@@ -18,7 +18,6 @@
 #include <boost/beast/version.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/strand.hpp>
-#include <boost/log/trivial.hpp>
 #include <boost/config.hpp>
 #include <algorithm>
 #include <cstdlib>
@@ -30,7 +29,11 @@
 #include <vector>
 
 #include "listener.h"
+#if 0
 #include "session.h"
+#else
+#include "road_session.h"
+#endif
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -63,7 +66,8 @@ int main(int argc, char* argv[])
     net::io_context ioc{threads};
 
     // Create and launch a listening port
-    std::make_shared<listener<session>>(
+//    std::make_shared<listener<session>>(
+    std::make_shared<listener<RoadSession>>(
         ioc,
         tcp::endpoint{address, port},
         doc_root)->run();
