@@ -12,14 +12,14 @@ namespace http = beast::http;   // from <boost/beast/http.hpp>
 namespace net = boost::asio;    // from <boost/asio.hpp>
 
 // Handles an HTTP server connection
-class session : public std::enable_shared_from_this<session> {
+class Session : public std::enable_shared_from_this<Session> {
   protected:
     using tcp = boost::asio::ip::tcp; // from <boost/asio/ip/tcp.hpp>
 
   public:
     // Take ownership of the stream
-    session(tcp::socket &&socket, std::shared_ptr<std::string const> const &doc_root)
-        : lambda_(*this), stream_(std::move(socket)), doc_root_(doc_root) {
+    Session(tcp::socket &&socket)
+        : lambda_(*this), stream_(std::move(socket)) {
     }
 
     void run();
@@ -33,9 +33,9 @@ class session : public std::enable_shared_from_this<session> {
     //    void handle_request();
 
     struct send_lambda {
-        session &self_;
+        Session &self_;
 
-        explicit send_lambda(session &self)
+        explicit send_lambda(Session &self)
             : self_(self) {
         }
 
@@ -55,7 +55,7 @@ class session : public std::enable_shared_from_this<session> {
                 self_.stream_,
                 *sp,
                 beast::bind_front_handler(
-                    &session::on_write,
+                    &Session::on_write,
                     self_.shared_from_this(),
                     sp->need_eof()));
         }
@@ -70,7 +70,6 @@ class session : public std::enable_shared_from_this<session> {
 
     beast::tcp_stream stream_;
     beast::flat_buffer buffer_;
-    std::shared_ptr<std::string const> doc_root_;
     http::request<http::string_body> req_;
     std::shared_ptr<void> res_;
 };

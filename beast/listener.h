@@ -14,26 +14,23 @@ namespace net = boost::asio;    // from <boost/asio.hpp>
 
 // Accepts incoming connections and launches the sessions
 template<typename Session>
-class listener : public std::enable_shared_from_this<listener<Session>>
+class Listener : public std::enable_shared_from_this<Listener<Session>>
 {
     using tcp = boost::asio::ip::tcp; // from <boost/asio/ip/tcp.hpp>
 
     net::io_context& ioc_;
     tcp::acceptor acceptor_;
-    std::shared_ptr<std::string const> doc_root_;
 
     // Report a failure
     void fail(beast::error_code ec, char const *what) {
         std::cerr << what << ": " << ec.message() << "\n";
     }
 public:
-    listener(
+    Listener(
         net::io_context& ioc,
-        tcp::endpoint endpoint,
-        std::shared_ptr<std::string const> const& doc_root)
+        tcp::endpoint endpoint)
         : ioc_(ioc)
         , acceptor_(net::make_strand(ioc))
-        , doc_root_(doc_root)
     {
         beast::error_code ec;
 
@@ -86,7 +83,7 @@ private:
         acceptor_.async_accept(
             net::make_strand(ioc_),
             beast::bind_front_handler(
-                &listener::on_accept,
+                &Listener::on_accept,
                 this->shared_from_this()));
     }
 
@@ -106,9 +103,7 @@ private:
                 std::move(socket),
                 doc_root_)->run();
 #else
-            std::make_shared<Session>(
-                std::move(socket),
-                doc_root_)->run();
+            std::make_shared<Session>(std::move(socket))->run();
 #endif
         }
 

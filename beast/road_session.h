@@ -2,10 +2,10 @@
 
 #include "session.h"
 
-class RoadSession : public session {
+class RoadSession : public Session {
 public:
-    RoadSession(tcp::socket &&socket, std::shared_ptr<std::string const> const &doc_root)
-        : session(std::move(socket), doc_root) {
+    RoadSession(tcp::socket &&socket)
+        : Session(std::move(socket)) {
     }
 
 protected:
