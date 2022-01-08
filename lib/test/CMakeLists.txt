@@ -1,4 +1,4 @@
-file(GLOB_RECURSE srcs ./*.cpp)
+file(GLOB_RECURSE srcs ./*.cpp ../src/*.cpp)
 
 add_executable(${libname}-test ${srcs})
 target_compile_options(${libname}-test PUBLIC -g -Wall)
