@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <gtest/gtest.h>
 
 #include "../iconvwrapper.h"
@@ -9,6 +10,46 @@ class IConvWrapperTest : public ::testing::Test {
 
     // virtual void TearDown() {}
 };
+
+TEST_F(IConvWrapperTest, utf162iso2022) {
+    auto converter = UTF16toiso2022Converter();
+
+    const auto utf16str = std::vector<uint16_t>({
+        0x3042, // あ
+        0xFF11, // １
+        0xFF21  // Ａ
+    });
+
+    const auto iso2022 = converter.convert(utf16str);
+
+    ASSERT_EQ(6, iso2022.size());
+
+    ASSERT_EQ(uint8_t(0x24), iso2022[0]);
+    ASSERT_EQ(uint8_t(0x22), iso2022[1]);
+
+    ASSERT_EQ(uint8_t(0x23), iso2022[2]);
+    ASSERT_EQ(uint8_t(0x31), iso2022[3]);
+
+    ASSERT_EQ(uint8_t(0x23), iso2022[4]);
+    ASSERT_EQ(uint8_t(0x41), iso2022[5]);
+}
+
+TEST_F(IConvWrapperTest, iso2022toutf16) {
+    auto converter = iso2022toUTF16Converter();
+
+    const auto iso2022str = std::vector<uint8_t>({0x1B, 0x24, 0x42,
+                                                  0x24, 0x22,
+                                                  0x23, 0x31,
+                                                  0x23, 0x41});
+
+    const auto utfstr = converter.convert(iso2022str);
+
+    ASSERT_EQ(3, utfstr.size());
+
+    ASSERT_EQ(uint16_t(0x3042), utfstr[0]); // あ
+    ASSERT_EQ(uint16_t(0xFF11), utfstr[1]); // １
+    ASSERT_EQ(uint16_t(0xFF21), utfstr[2]); // Ａ
+}
 
 TEST_F(IConvWrapperTest, utf2iso2022) {
     auto converter = UTFtoiso2022Converter();
@@ -51,12 +92,10 @@ TEST_F(IConvWrapperTest, utf2iso2022RmEscSeq) {
 TEST_F(IConvWrapperTest, iso2022toutf) {
     auto converter = iso2022toUTFConverter();
 
-    const  auto iso2022str = std::vector<uint8_t>({
-        0x1B, 0x24, 0x42,
-        0x24, 0x22,
-        0x23, 0x31,
-        0x23, 0x41        
-    });
+    const auto iso2022str = std::vector<uint8_t>({0x1B, 0x24, 0x42,
+                                                  0x24, 0x22,
+                                                  0x23, 0x31,
+                                                  0x23, 0x41});
 
     const auto utfstr = converter.convert(iso2022str, false);
     ASSERT_EQ("あ１Ａ", utfstr);
@@ -65,19 +104,13 @@ TEST_F(IConvWrapperTest, iso2022toutf) {
 TEST_F(IConvWrapperTest, iso2022toutfAddEscSeq) {
     auto converter = iso2022toUTFConverter();
 
-    const  auto iso2022str = std::vector<uint8_t>({
-        0x24, 0x22,
-        0x23, 0x31,
-        0x23, 0x41        
-    });
+    const auto iso2022str = std::vector<uint8_t>({0x24, 0x22,
+                                                  0x23, 0x31,
+                                                  0x23, 0x41});
 
     const auto utfstr = converter.convert(iso2022str);
     ASSERT_EQ("あ１Ａ", utfstr);
 }
-
-
-
-
 
 TEST_F(IConvWrapperTest, utf2cp932) {
     constexpr char from[] = "UTF-8";
